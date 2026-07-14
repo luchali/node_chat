@@ -1,19 +1,3 @@
-// import express from 'express';
-// import cors from 'cors';
-
-// const PORT = process.env.PORT || 3000;
-// const app = express();
-
-// app.use(express.json());
-// app.use(cors());
-
-// app.get('/', (req, res) => {
-//   res.send('Hello World!');
-// });
-
-// app.listen(PORT, () => {
-//   console.log(`Server running at http://localhost:${PORT}/`);
-// });
 import express from 'express';
 import cors from 'cors';
 import EventEmitter from 'node:events';
@@ -30,6 +14,28 @@ type Message = {
   time: Date;
   author: string;
 };
+
+type User = {
+  name: string;
+}
+
+const users: User[] = [];
+
+app.post('/users', (req, res) => {
+  const name = req.body.name;
+
+  if (!name) {
+    res.status(400).json({ error: 'Name is required' });
+
+    return;
+  }
+
+  const user = { name };
+
+  users.push(user);
+
+  res.status(201).json(user);
+});
 
 const messages = [] as Message[];
 const messageEmitter = new EventEmitter();

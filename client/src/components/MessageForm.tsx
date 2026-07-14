@@ -3,18 +3,18 @@ import { sendMessage } from '../api';
 
 interface Props {
   onMessageSent: () => void;
+  username: string;
 }
 
-export const MessageForm = ({ onMessageSent }: Props) => {
+export const MessageForm = ({ onMessageSent, username }: Props) => {
   const [text, setText] = useState('');
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
 
     if (!text) return;
-     const author = localStorage.getItem('username') ?? 'Anonymous';
 
-    await sendMessage(text, author);
+    await sendMessage(text, username);
     setText('');
     onMessageSent();
   }

@@ -12,3 +12,7 @@ export async function getMessages() {
 export function sendMessage(text: string, author: string) {
   return axios.post('/messages', { text, author });
 }
+
+export function sendUsername(name: string) {
+  return axios.post('/users', { name });
+}

@@ -5,6 +5,7 @@ import { MessageList } from './components/MessageList.js';
 import { Message } from './types/message';
 import { getMessages } from './api.js';
 import { WebSocketLoader } from './dataLoader/index.js';
+import { UserNameForm } from './components/UserNameForm.js';
 
 // interface Props {
 //   onData: (data: Message[]) => void;
@@ -20,7 +21,9 @@ import { WebSocketLoader } from './dataLoader/index.js';
 
 export function App() {
   const [messages, setMessages] = useState<Message[]>([]);
-
+  const [username, setUsername] = useState(
+    localStorage.getItem('username') ?? '',
+  );
   async function loadMessages() {
     const messagesFromServer = await getMessages();
 
@@ -42,14 +45,31 @@ export function App() {
   }, []);
 
   useEffect(() => {
-    loadMessages();
-  }, []);
+    if (username) {
+      loadMessages();
+    }
+  }, [username]);
+
+  if (!username) {
+    return (
+      <section className="section content">
+        <h1 className="title">Chat application</h1>
+        <h2 className="subtitle">Enter your username</h2>
+
+        <UserNameForm onUsernameSaved={setUsername} />
+      </section>
+    );
+  }
 
   return (
     <section className="section content">
       <h1 className="title">Chat application</h1>
+      <p>
+        Your username: <strong>{username}</strong>
+      </p>
+
       <WebSocketLoader onMessage={addMessage} />
-      <MessageForm onMessageSent={loadMessages} />
+      <MessageForm username={username} onMessageSent={loadMessages} />
       <MessageList messages={messages} />
     </section>
   );

@@ -32,5 +32,5 @@ export const WebSocketLoader: React.FC<Props> = ({ onMessage }) => {
     };
   }, [onMessage]);
 
-  return <h1 className="title">Server Sent Events</h1>;
+  return <h1 className="title">WebSocket</h1>;
 };
