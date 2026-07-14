@@ -9,6 +9,6 @@ export async function getMessages() {
   return res.data as Message[];
 }
 
-export function sendMessage(text: string) {
-  return axios.post('/messages', { text });
+export function sendMessage(text: string, author: string) {
+  return axios.post('/messages', { text, author });
 }

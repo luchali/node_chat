@@ -1,34 +1,55 @@
-import React, { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import { MessageForm } from './components/MessageForm.js';
 import { MessageList } from './components/MessageList.js';
 import { Message } from './types/message';
 import { getMessages } from './api.js';
+import { WebSocketLoader } from './dataLoader/index.js';
 
-interface Props {
-  onData: (data: Message[]) => void;
-}
+// interface Props {
+//   onData: (data: Message[]) => void;
+// }
 
-const DataLoader: React.FC<Props> = ({ onData }) => {
-  useEffect(() => {
-    getMessages().then(onData);
-  });
+// const DataLoader: React.FC<Props> = ({ onData }) => {
+//   useEffect(() => {
+//     getMessages().then(onData);
+//   });
 
-  return <h1 className="title">Chat application</h1>;
-};
+//   return <h1 className="title">Chat application</h1>;
+// };
 
 export function App() {
   const [messages, setMessages] = useState<Message[]>([]);
 
-  function saveData(messages: Message[]) {
-    setMessages(messages);
+  async function loadMessages() {
+    const messagesFromServer = await getMessages();
+
+    setMessages(messagesFromServer);
   }
+
+  const addMessage = useCallback((message: Message) => {
+    setMessages(currentMessages => {
+      const alreadyExists = currentMessages.some(
+        currentMessage => currentMessage.time === message.time,
+      );
+
+      if (alreadyExists) {
+        return currentMessages;
+      }
+
+      return [...currentMessages, message];
+    });
+  }, []);
+
+  useEffect(() => {
+    loadMessages();
+  }, []);
 
   return (
     <section className="section content">
-      <DataLoader onData={saveData} />
-
-      <MessageForm />
+      <h1 className="title">Chat application</h1>
+      <WebSocketLoader onMessage={addMessage} />
+      <MessageForm onMessageSent={loadMessages} />
       <MessageList messages={messages} />
     </section>
   );
